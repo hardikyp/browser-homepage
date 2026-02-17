@@ -100,17 +100,18 @@ function createAppElement(app) {
   return link;
 }
 
-async function renderApps() {
-  const grid = document.getElementById("apps-grid");
-  const status = document.getElementById("apps-status");
+async function renderAppSection({ jsonFile, gridId, statusId, sectionLabel }) {
+  const grid = document.getElementById(gridId);
+  const status = document.getElementById(statusId);
   if (!grid || !status) return;
+
   status.hidden = true;
   status.textContent = "";
 
   try {
-    const response = await fetch("apps.json", { cache: "no-store" });
+    const response = await fetch(jsonFile, { cache: "no-store" });
     if (!response.ok) {
-      throw new Error(`Failed to load apps.json (${response.status})`);
+      throw new Error(`Failed to load ${jsonFile} (${response.status})`);
     }
 
     const payload = await response.json();
@@ -119,7 +120,7 @@ async function renderApps() {
 
     if (apps.length === 0) {
       status.hidden = false;
-      status.textContent = "No valid app entries found in apps.json.";
+      status.textContent = `No valid app entries found in ${jsonFile}.`;
       return;
     }
 
@@ -129,10 +130,26 @@ async function renderApps() {
     grid.appendChild(fragment);
   } catch (error) {
     status.hidden = false;
-    status.textContent =
-      "Could not load apps.json. If you opened via file://, run a local server (python3 -m http.server 5500).";
+    status.textContent = `Could not load ${sectionLabel} apps. Use a local server (python3 -m http.server 5500).`;
     console.error(error);
   }
+}
+
+async function renderApps() {
+  await Promise.all([
+    renderAppSection({
+      jsonFile: "internet-apps.json",
+      gridId: "internet-apps-grid",
+      statusId: "internet-apps-status",
+      sectionLabel: "internet",
+    }),
+    renderAppSection({
+      jsonFile: "local-apps.json",
+      gridId: "local-apps-grid",
+      statusId: "local-apps-status",
+      sectionLabel: "local network",
+    }),
+  ]);
 }
 
 function getCurrentPosition() {

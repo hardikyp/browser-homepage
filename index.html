@@ -20,16 +20,20 @@
           <article class="panel panel-soft apps-panel" aria-labelledby="apps-title">
             <div class="panel-header">
               <h2 id="apps-title" class="apps-title">Quick Access</h2>
-              <p class="panel-tag">Home + Internet</p>
+              <p class="panel-tag">Shortcuts</p>
             </div>
-            <div id="apps-grid" class="apps-grid"></div>
-            <p id="apps-status" class="apps-status" hidden></p>
-          </article>
 
-          <article class="panel panel-dark discover-panel" aria-label="Discover card">
-            <p class="discover-kicker">New in</p>
-            <p class="discover-title">Your Dashboard</p>
-            <p class="discover-action">Discover</p>
+            <section class="app-section" aria-labelledby="internet-title">
+              <h3 id="internet-title" class="app-section-title">Internet</h3>
+              <div id="internet-apps-grid" class="apps-grid"></div>
+              <p id="internet-apps-status" class="apps-status" hidden></p>
+            </section>
+
+            <section class="app-section" aria-labelledby="local-title">
+              <h3 id="local-title" class="app-section-title">Local Network</h3>
+              <div id="local-apps-grid" class="apps-grid"></div>
+              <p id="local-apps-status" class="apps-status" hidden></p>
+            </section>
           </article>
         </div>
 

@@ -12,12 +12,6 @@
       "url": "https://proxmox.local:8006",
       "icon": "icons/proxmox.svg",
       "openInNewTab": true
-    },
-    {
-      "name": "Gmail",
-      "url": "https://mail.google.com",
-      "icon": "icons/gmail.svg",
-      "openInNewTab": true
     }
   ]
 }

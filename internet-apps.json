@@ -1,0 +1,11 @@
+{
+  "$schema": "./apps.schema.json",
+  "apps": [
+    {
+      "name": "Gmail",
+      "url": "https://mail.google.com",
+      "icon": "icons/gmail.svg",
+      "openInNewTab": true
+    }
+  ]
+}

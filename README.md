@@ -7,7 +7,9 @@ A clean, minimal dashboard homepage for Brave.
 - Top center welcome message: `Welcome, Hardik!`
 - Top left live 24-hour clock
 - Day and date shown below the clock in smaller text
-- iOS-style app icon grid loaded from `apps.json`
+- iOS-style app icon grids with separate sections:
+  - Internet shortcuts from `internet-apps.json`
+  - Local network services from `local-apps.json`
 - Glassmorphism weather card with:
   - current location
   - current temperature
@@ -27,11 +29,14 @@ A clean, minimal dashboard homepage for Brave.
 3. Visit:
    [http://localhost:5500](http://localhost:5500)
 
-Note: The app grid reads `apps.json` using `fetch`, so using a local server is recommended.
+Note: The app grids read JSON files using `fetch`, so running from a local server is required.
 
 ## Data entry for apps
 
-All app shortcuts are managed in `apps.json`.
+All app shortcuts are managed in these files:
+
+- `/Users/hardik/Repositories/browser-homepage/internet-apps.json`
+- `/Users/hardik/Repositories/browser-homepage/local-apps.json`
 
 ### File structure
 
@@ -52,19 +57,17 @@ All app shortcuts are managed in `apps.json`.
 ### Fields
 
 - `name` (required): label shown under the icon
-- `url` (required): destination link (home network URLs and internet URLs both work)
+- `url` (required): destination link
 - `icon` (required): relative path to icon asset in `icons/`
 - `openInNewTab` (optional): defaults to `true`; set `false` to open in same tab
 
 ### Add a new app
 
 1. Add icon file to `/Users/hardik/Repositories/browser-homepage/icons/` (PNG/SVG recommended).
-2. Add a new object to the `apps` array in `/Users/hardik/Repositories/browser-homepage/apps.json`.
+2. Add the new app object to either internet or local JSON file.
 3. Refresh the browser page.
 
 ## Use as Brave homepage / new tab
-
-Brave has built-in New Tab options, but for a custom local page this is the simplest setup.
 
 ### Option 1: Open this dashboard on startup
 
@@ -82,6 +85,6 @@ Brave has built-in New Tab options, but for a custom local page this is the simp
 ## Notes
 
 - Keep the local server running if you use `http://localhost:5500`.
-- `apps.schema.json` helps editors validate `apps.json` while you type.
+- `apps.schema.json` helps editors validate app JSON while you type.
 - The weather card needs internet access and location permission in Brave.
 - If precise geolocation is unavailable, the weather card falls back to approximate IP-based location.
