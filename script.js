@@ -29,6 +29,12 @@ const WEATHER_CODES = {
   99: { label: "Severe thunderstorm", className: "condition-storm" },
 };
 
+const DEFAULT_WEATHER_LOCATION = {
+  label: "New York, NY",
+  lat: 40.7128,
+  lon: -74.006,
+};
+
 function updateDateTime() {
   const now = new Date();
 
@@ -168,21 +174,45 @@ function getCurrentPosition() {
 }
 
 async function getIpApproxLocation() {
-  const response = await fetch("https://ipwho.is/", { cache: "no-store" });
-  if (!response.ok) {
-    throw new Error(`IP location request failed with status ${response.status}`);
+  const providers = [
+    {
+      url: "https://get.geojs.io/v1/ip/geo.json",
+      parse: (payload) => ({
+        lat: Number(payload.latitude),
+        lon: Number(payload.longitude),
+        locationLabel: [payload.city, payload.region].filter(Boolean).join(", "),
+      }),
+    },
+    {
+      url: "https://ipwho.is/",
+      parse: (payload) => ({
+        lat: Number(payload.latitude),
+        lon: Number(payload.longitude),
+        locationLabel: [payload.city, payload.region].filter(Boolean).join(", "),
+      }),
+    },
+  ];
+
+  for (const provider of providers) {
+    try {
+      const response = await fetch(provider.url, { cache: "no-store" });
+      if (!response.ok) continue;
+
+      const payload = await response.json();
+      const parsed = provider.parse(payload);
+      if (Number.isFinite(parsed.lat) && Number.isFinite(parsed.lon)) {
+        return {
+          lat: parsed.lat,
+          lon: parsed.lon,
+          locationLabel: parsed.locationLabel || "Approximate location",
+        };
+      }
+    } catch (error) {
+      console.warn(`IP location provider failed: ${provider.url}`, error);
+    }
   }
 
-  const payload = await response.json();
-  if (!payload.success || typeof payload.latitude !== "number" || typeof payload.longitude !== "number") {
-    throw new Error("IP location did not return valid coordinates.");
-  }
-
-  return {
-    lat: payload.latitude,
-    lon: payload.longitude,
-    locationLabel: [payload.city, payload.region].filter(Boolean).join(", ") || "Approximate location",
-  };
+  throw new Error("All IP location providers failed.");
 }
 
 function setWeatherStatus(message, isError = false) {
@@ -225,6 +255,27 @@ async function fetchWeatherForCoords(lat, lon) {
   return { weatherPayload, reversePayload };
 }
 
+async function loadWeatherConfig() {
+  try {
+    const response = await fetch("weather-config.json", { cache: "no-store" });
+    if (!response.ok) return DEFAULT_WEATHER_LOCATION;
+    const payload = await response.json();
+    const candidate = payload?.defaultLocation;
+
+    if (!candidate) return DEFAULT_WEATHER_LOCATION;
+
+    const lat = Number(candidate.latitude);
+    const lon = Number(candidate.longitude);
+    const label = typeof candidate.label === "string" && candidate.label.trim() ? candidate.label.trim() : DEFAULT_WEATHER_LOCATION.label;
+
+    if (!Number.isFinite(lat) || !Number.isFinite(lon)) return DEFAULT_WEATHER_LOCATION;
+    return { label, lat, lon };
+  } catch (error) {
+    console.warn("Could not load weather-config.json, using built-in default location.", error);
+    return DEFAULT_WEATHER_LOCATION;
+  }
+}
+
 function applyConditionClass(conditionClassName) {
   const visual = document.getElementById("weather-visual");
   if (!visual) return;
@@ -247,21 +298,31 @@ async function loadWeather() {
   try {
     let lat;
     let lon;
-    let fallbackLocationLabel = "";
-    let preciseLocation = true;
+    let locationLabel = "";
+    let source = "gps";
 
     try {
       const position = await getCurrentPosition();
       lat = position.coords.latitude;
       lon = position.coords.longitude;
     } catch (geoError) {
-      preciseLocation = false;
-      const ipLocation = await getIpApproxLocation();
-      lat = ipLocation.lat;
-      lon = ipLocation.lon;
-      fallbackLocationLabel = ipLocation.locationLabel;
-      setWeatherStatus("Using approximate location from IP.", false);
-      console.warn("Geolocation unavailable, using IP-based location.", geoError);
+      source = "ip";
+      try {
+        const ipLocation = await getIpApproxLocation();
+        lat = ipLocation.lat;
+        lon = ipLocation.lon;
+        locationLabel = ipLocation.locationLabel;
+        setWeatherStatus("Using approximate location from IP.", false);
+        console.warn("Geolocation unavailable, using IP-based location.", geoError);
+      } catch (ipError) {
+        source = "default";
+        const fallback = await loadWeatherConfig();
+        lat = fallback.lat;
+        lon = fallback.lon;
+        locationLabel = fallback.label;
+        setWeatherStatus(`Using default location: ${fallback.label}.`, false);
+        console.warn("IP location failed, using default weather-config location.", ipError);
+      }
     }
 
     const { weatherPayload, reversePayload } = await fetchWeatherForCoords(lat, lon);
@@ -272,7 +333,12 @@ async function loadWeather() {
 
     const weatherInfo = WEATHER_CODES[current.weather_code] || { label: "Unknown", className: "condition-cloudy" };
 
-    locationEl.textContent = preciseLocation ? formatLocationLabel(reversePayload) : fallbackLocationLabel || formatLocationLabel(reversePayload);
+    const reverseLabel = formatLocationLabel(reversePayload);
+    if (source === "gps") {
+      locationEl.textContent = reverseLabel;
+    } else {
+      locationEl.textContent = locationLabel || reverseLabel;
+    }
     summaryEl.textContent = weatherInfo.label;
     tempEl.textContent = `${Math.round(current.temperature_2m)}°F`;
     precipEl.textContent = `${Number(current.precipitation).toFixed(2)} in`;

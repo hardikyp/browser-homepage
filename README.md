@@ -37,6 +37,7 @@ All app shortcuts are managed in these files:
 
 - `/Users/hardik/Repositories/browser-homepage/internet-apps.json`
 - `/Users/hardik/Repositories/browser-homepage/local-apps.json`
+- `/Users/hardik/Repositories/browser-homepage/weather-config.json` (fallback weather location)
 
 ### File structure
 
@@ -87,4 +88,5 @@ All app shortcuts are managed in these files:
 - Keep the local server running if you use `http://localhost:5500`.
 - `apps.schema.json` helps editors validate app JSON while you type.
 - The weather card needs internet access and location permission in Brave.
-- If precise geolocation is unavailable, the weather card falls back to approximate IP-based location.
+- If precise geolocation is unavailable, weather falls back to IP-based location.
+- If IP lookup also fails, weather uses `weather-config.json` default coordinates.
