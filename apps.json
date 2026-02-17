@@ -1,0 +1,23 @@
+{
+  "$schema": "./apps.schema.json",
+  "apps": [
+    {
+      "name": "Home Assistant",
+      "url": "http://homeassistant.local:8123",
+      "icon": "icons/home-assistant.svg",
+      "openInNewTab": true
+    },
+    {
+      "name": "Proxmox",
+      "url": "https://proxmox.local:8006",
+      "icon": "icons/proxmox.svg",
+      "openInNewTab": true
+    },
+    {
+      "name": "Gmail",
+      "url": "https://mail.google.com",
+      "icon": "icons/gmail.svg",
+      "openInNewTab": true
+    }
+  ]
+}

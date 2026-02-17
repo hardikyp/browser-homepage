@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" role="img" aria-label="Home Assistant">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#0ea5e9"/>
+    </linearGradient>
+  </defs>
+  <rect width="180" height="180" rx="40" fill="url(#g)"/>
+  <path d="M90 35l40 23v45c0 23-16 42-40 47-24-5-40-24-40-47V58z" fill="#fff" opacity="0.9"/>
+  <path d="M90 68l18 10v20c0 11-7 20-18 23-11-3-18-12-18-23V78z" fill="#0ea5e9"/>
+</svg>
