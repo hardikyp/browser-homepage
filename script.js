@@ -16,9 +16,15 @@ function updateDateTime() {
 
   const clockEl = document.getElementById("clock");
   const dateEl = document.getElementById("date");
+  const featureDayEl = document.getElementById("feature-day");
+  const featureDateEl = document.getElementById("feature-date");
+  const featureTimeEl = document.getElementById("feature-time");
 
   if (clockEl) clockEl.textContent = time;
   if (dateEl) dateEl.textContent = date;
+  if (featureDayEl) featureDayEl.textContent = now.toLocaleDateString("en-US", { weekday: "short" });
+  if (featureDateEl) featureDateEl.textContent = now.toLocaleDateString("en-US", { day: "numeric" });
+  if (featureTimeEl) featureTimeEl.textContent = now.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false });
 }
 
 function normalizeApp(rawApp) {
@@ -73,6 +79,8 @@ async function renderApps() {
   const grid = document.getElementById("apps-grid");
   const status = document.getElementById("apps-status");
   if (!grid || !status) return;
+  status.hidden = true;
+  status.textContent = "";
 
   try {
     const response = await fetch("apps.json", { cache: "no-store" });

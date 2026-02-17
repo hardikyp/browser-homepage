@@ -8,6 +8,10 @@
   </head>
   <body>
     <main class="dashboard" aria-label="Homepage dashboard">
+      <div class="ambient ambient-one" aria-hidden="true"></div>
+      <div class="ambient ambient-two" aria-hidden="true"></div>
+      <div class="ambient ambient-three" aria-hidden="true"></div>
+
       <section class="clock-panel" aria-live="polite">
         <p id="clock" class="clock" aria-label="Current time">00:00:00</p>
         <p id="date" class="date" aria-label="Current day and date">Monday, January 1</p>
@@ -15,10 +19,37 @@
 
       <h1 class="welcome">Welcome, Hardik!</h1>
 
-      <section class="apps-panel" aria-labelledby="apps-title">
-        <h2 id="apps-title" class="apps-title">Apps</h2>
-        <div id="apps-grid" class="apps-grid"></div>
-        <p id="apps-status" class="apps-status" hidden></p>
+      <section class="board" aria-label="Dashboard content">
+        <div class="stack-left">
+          <article class="panel panel-soft apps-panel" aria-labelledby="apps-title">
+            <div class="panel-header">
+              <h2 id="apps-title" class="apps-title">Quick Access</h2>
+              <p class="panel-tag">Home + Internet</p>
+            </div>
+            <div id="apps-grid" class="apps-grid"></div>
+            <p id="apps-status" class="apps-status" hidden></p>
+          </article>
+
+          <article class="panel panel-dark discover-panel" aria-label="Discover card">
+            <p class="discover-kicker">New in</p>
+            <p class="discover-title">Your Dashboard</p>
+            <p class="discover-action">Discover</p>
+          </article>
+        </div>
+
+        <article class="panel panel-feature" aria-label="Spotlight card">
+          <div class="feature-strip">
+            <p class="feature-day" id="feature-day">Thu</p>
+            <p class="feature-date" id="feature-date">24th</p>
+            <p class="feature-time" id="feature-time">18 PM</p>
+            <p class="feature-place">Hardik Home Network</p>
+          </div>
+          <div class="feature-content">
+            <p class="feature-label">Grand opening</p>
+            <p class="feature-title">New shortcuts and widgets</p>
+            <div class="feature-orb" aria-hidden="true"></div>
+          </div>
+        </article>
       </section>
     </main>
 
