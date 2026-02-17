@@ -30,9 +30,9 @@ const WEATHER_CODES = {
 };
 
 const DEFAULT_WEATHER_LOCATION = {
-  label: "New York, NY",
-  lat: 40.7128,
-  lon: -74.006,
+  label: "Ann Arbor, MI",
+  lat: 42.279594,
+  lon: -83.732124,
 };
 
 function updateDateTime() {
@@ -241,17 +241,23 @@ async function fetchWeatherForCoords(lat, lon) {
 
   const reverseUrl = `https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}&language=en&count=1`;
 
-  const [weatherResponse, reverseResponse] = await Promise.all([
-    fetch(weatherUrl, { cache: "no-store" }),
-    fetch(reverseUrl, { cache: "no-store" }),
-  ]);
+  const weatherResponse = await fetch(weatherUrl, { cache: "no-store" });
 
   if (!weatherResponse.ok) {
     throw new Error(`Weather request failed with status ${weatherResponse.status}`);
   }
 
   const weatherPayload = await weatherResponse.json();
-  const reversePayload = reverseResponse.ok ? await reverseResponse.json() : null;
+  let reversePayload = null;
+  try {
+    const reverseResponse = await fetch(reverseUrl, { cache: "no-store" });
+    if (reverseResponse.ok) {
+      reversePayload = await reverseResponse.json();
+    }
+  } catch (error) {
+    console.warn("Reverse geocoding unavailable; continuing with fallback location label.", error);
+  }
+
   return { weatherPayload, reversePayload };
 }
 
@@ -351,7 +357,8 @@ async function loadWeather() {
     precipEl.textContent = "-- in";
     windEl.textContent = "-- mph";
     applyConditionClass("condition-cloudy");
-    setWeatherStatus("Weather fetch failed. Check internet access and reload.", true);
+    const reason = error instanceof Error && error.message ? error.message : "Unknown error";
+    setWeatherStatus(`Weather fetch failed: ${reason}`, true);
     console.error(error);
   }
 }

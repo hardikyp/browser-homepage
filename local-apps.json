@@ -2,15 +2,21 @@
   "$schema": "./apps.schema.json",
   "apps": [
     {
-      "name": "Home Assistant",
-      "url": "http://homeassistant.local:8123",
-      "icon": "icons/home-assistant.svg",
+      "name": "Pihole",
+      "url": "http://pihole.local/admin",
+      "icon": "icons/pihole.svg",
       "openInNewTab": true
     },
     {
-      "name": "Proxmox",
-      "url": "https://proxmox.local:8006",
-      "icon": "icons/proxmox.svg",
+      "name": "Kavita",
+      "url": "http://192.168.0.25:5000/login",
+      "icon": "icons/kavita.svg",
+      "openInNewTab": true
+    },
+    {
+      "name": "Paperless-ngx",
+      "url": "http://192.168.0.25:8000",
+      "icon": "icons/paperless-ngx.svg",
       "openInNewTab": true
     }
   ]

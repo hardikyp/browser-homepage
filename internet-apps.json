@@ -6,6 +6,12 @@
       "url": "https://mail.google.com",
       "icon": "icons/gmail.svg",
       "openInNewTab": true
+    },
+    {
+      "name": "Github",
+      "url": "https://github.com/hardikyp",
+      "icon": "icons/github.svg",
+      "openInNewTab": true
     }
   ]
 }
