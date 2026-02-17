@@ -21,10 +21,7 @@ body {
   min-height: 100vh;
   font-family: "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   color: var(--text-primary);
-  background:
-    radial-gradient(circle at 84% 12%, rgba(255, 255, 255, 0.65), transparent 34%),
-    radial-gradient(circle at 14% 88%, rgba(249, 109, 35, 0.22), transparent 38%),
-    linear-gradient(156deg, var(--bg-cream), var(--bg-sand) 56%, var(--bg-deep));
+  background: #e5d7ca;
 }
 
 .dashboard {
@@ -32,38 +29,6 @@ body {
   min-height: 100vh;
   padding: 2rem;
   overflow: hidden;
-}
-
-.ambient {
-  position: absolute;
-  border-radius: 50%;
-  pointer-events: none;
-  filter: blur(0.4px);
-}
-
-.ambient-one {
-  width: 360px;
-  height: 360px;
-  right: -110px;
-  top: 9%;
-  background: radial-gradient(circle at 32% 32%, rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.16));
-  border: 1px solid rgba(255, 255, 255, 0.55);
-}
-
-.ambient-two {
-  width: 280px;
-  height: 280px;
-  left: -68px;
-  bottom: 52px;
-  background: radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.82), rgba(255, 127, 48, 0.3));
-}
-
-.ambient-three {
-  width: 148px;
-  height: 148px;
-  right: 18%;
-  bottom: 26px;
-  background: radial-gradient(circle at 42% 32%, rgba(255, 255, 255, 0.95), rgba(255, 124, 38, 0.44));
 }
 
 .clock-panel {

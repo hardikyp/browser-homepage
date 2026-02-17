@@ -84,3 +84,4 @@ Brave has built-in New Tab options, but for a custom local page this is the simp
 - Keep the local server running if you use `http://localhost:5500`.
 - `apps.schema.json` helps editors validate `apps.json` while you type.
 - The weather card needs internet access and location permission in Brave.
+- If precise geolocation is unavailable, the weather card falls back to approximate IP-based location.

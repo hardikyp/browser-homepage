@@ -150,6 +150,24 @@ function getCurrentPosition() {
   });
 }
 
+async function getIpApproxLocation() {
+  const response = await fetch("https://ipwho.is/", { cache: "no-store" });
+  if (!response.ok) {
+    throw new Error(`IP location request failed with status ${response.status}`);
+  }
+
+  const payload = await response.json();
+  if (!payload.success || typeof payload.latitude !== "number" || typeof payload.longitude !== "number") {
+    throw new Error("IP location did not return valid coordinates.");
+  }
+
+  return {
+    lat: payload.latitude,
+    lon: payload.longitude,
+    locationLabel: [payload.city, payload.region].filter(Boolean).join(", ") || "Approximate location",
+  };
+}
+
 function setWeatherStatus(message, isError = false) {
   const statusEl = document.getElementById("weather-status");
   if (!statusEl) return;
@@ -166,6 +184,28 @@ function formatLocationLabel(reverseGeocodePayload) {
   const name = place.name || "Current location";
   const admin = place.admin1 || "";
   return admin ? `${name}, ${admin}` : name;
+}
+
+async function fetchWeatherForCoords(lat, lon) {
+  const weatherUrl =
+    `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
+    "&current=temperature_2m,precipitation,wind_speed_10m,weather_code" +
+    "&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch";
+
+  const reverseUrl = `https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}&language=en&count=1`;
+
+  const [weatherResponse, reverseResponse] = await Promise.all([
+    fetch(weatherUrl, { cache: "no-store" }),
+    fetch(reverseUrl, { cache: "no-store" }),
+  ]);
+
+  if (!weatherResponse.ok) {
+    throw new Error(`Weather request failed with status ${weatherResponse.status}`);
+  }
+
+  const weatherPayload = await weatherResponse.json();
+  const reversePayload = reverseResponse.ok ? await reverseResponse.json() : null;
+  return { weatherPayload, reversePayload };
 }
 
 function applyConditionClass(conditionClassName) {
@@ -188,30 +228,26 @@ async function loadWeather() {
   setWeatherStatus("");
 
   try {
-    const position = await getCurrentPosition();
-    const lat = position.coords.latitude;
-    const lon = position.coords.longitude;
+    let lat;
+    let lon;
+    let fallbackLocationLabel = "";
+    let preciseLocation = true;
 
-    const weatherUrl =
-      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
-      "&current=temperature_2m,precipitation,wind_speed_10m,weather_code" +
-      "&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch";
-
-    const reverseUrl =
-      `https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}&language=en&count=1`;
-
-    const [weatherResponse, reverseResponse] = await Promise.all([
-      fetch(weatherUrl, { cache: "no-store" }),
-      fetch(reverseUrl, { cache: "no-store" }),
-    ]);
-
-    if (!weatherResponse.ok) {
-      throw new Error(`Weather request failed with status ${weatherResponse.status}`);
+    try {
+      const position = await getCurrentPosition();
+      lat = position.coords.latitude;
+      lon = position.coords.longitude;
+    } catch (geoError) {
+      preciseLocation = false;
+      const ipLocation = await getIpApproxLocation();
+      lat = ipLocation.lat;
+      lon = ipLocation.lon;
+      fallbackLocationLabel = ipLocation.locationLabel;
+      setWeatherStatus("Using approximate location from IP.", false);
+      console.warn("Geolocation unavailable, using IP-based location.", geoError);
     }
 
-    const weatherPayload = await weatherResponse.json();
-    const reversePayload = reverseResponse.ok ? await reverseResponse.json() : null;
-
+    const { weatherPayload, reversePayload } = await fetchWeatherForCoords(lat, lon);
     const current = weatherPayload.current;
     if (!current) {
       throw new Error("Weather data is unavailable right now.");
@@ -219,7 +255,7 @@ async function loadWeather() {
 
     const weatherInfo = WEATHER_CODES[current.weather_code] || { label: "Unknown", className: "condition-cloudy" };
 
-    locationEl.textContent = formatLocationLabel(reversePayload);
+    locationEl.textContent = preciseLocation ? formatLocationLabel(reversePayload) : fallbackLocationLabel || formatLocationLabel(reversePayload);
     summaryEl.textContent = weatherInfo.label;
     tempEl.textContent = `${Math.round(current.temperature_2m)}°F`;
     precipEl.textContent = `${Number(current.precipitation).toFixed(2)} in`;
@@ -232,7 +268,7 @@ async function loadWeather() {
     precipEl.textContent = "-- in";
     windEl.textContent = "-- mph";
     applyConditionClass("condition-cloudy");
-    setWeatherStatus("Enable location access and reload to show current weather.", true);
+    setWeatherStatus("Weather fetch failed. Check internet access and reload.", true);
     console.error(error);
   }
 }
