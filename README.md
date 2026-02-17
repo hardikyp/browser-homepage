@@ -8,6 +8,11 @@ A clean, minimal dashboard homepage for Brave.
 - Top left live 24-hour clock
 - Day and date shown below the clock in smaller text
 - iOS-style app icon grid loaded from `apps.json`
+- Glassmorphism weather card with:
+  - current location
+  - current temperature
+  - current precipitation and wind
+  - animated condition visualization (clear/cloudy/rain/snow/storm/fog)
 
 ## Run locally
 
@@ -78,3 +83,4 @@ Brave has built-in New Tab options, but for a custom local page this is the simp
 
 - Keep the local server running if you use `http://localhost:5500`.
 - `apps.schema.json` helps editors validate `apps.json` while you type.
+- The weather card needs internet access and location permission in Brave.

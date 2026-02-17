@@ -37,18 +37,38 @@
           </article>
         </div>
 
-        <article class="panel panel-feature" aria-label="Spotlight card">
-          <div class="feature-strip">
-            <p class="feature-day" id="feature-day">Thu</p>
-            <p class="feature-date" id="feature-date">24th</p>
-            <p class="feature-time" id="feature-time">18 PM</p>
-            <p class="feature-place">Hardik Home Network</p>
+        <article class="panel panel-weather" aria-label="Weather card">
+          <div class="weather-header">
+            <p id="weather-location" class="weather-location">Locating...</p>
+            <p id="weather-summary" class="weather-summary">Fetching weather</p>
           </div>
-          <div class="feature-content">
-            <p class="feature-label">Grand opening</p>
-            <p class="feature-title">New shortcuts and widgets</p>
-            <div class="feature-orb" aria-hidden="true"></div>
+          <div class="weather-main">
+            <p id="weather-temp" class="weather-temp">--°F</p>
+            <div id="weather-visual" class="weather-visual condition-clear" aria-hidden="true">
+              <span class="sun-core"></span>
+              <span class="cloud cloud-one"></span>
+              <span class="cloud cloud-two"></span>
+              <span class="drop drop-one"></span>
+              <span class="drop drop-two"></span>
+              <span class="drop drop-three"></span>
+              <span class="flake flake-one"></span>
+              <span class="flake flake-two"></span>
+              <span class="bolt"></span>
+              <span class="fog fog-one"></span>
+              <span class="fog fog-two"></span>
+            </div>
           </div>
+          <div class="weather-stats">
+            <div class="weather-stat">
+              <p class="stat-label">Precipitation</p>
+              <p id="weather-precip" class="stat-value">-- mm</p>
+            </div>
+            <div class="weather-stat">
+              <p class="stat-label">Wind</p>
+              <p id="weather-wind" class="stat-value">-- mph</p>
+            </div>
+          </div>
+          <p id="weather-status" class="weather-status" hidden></p>
         </article>
       </section>
     </main>
